@@ -1,4 +1,3 @@
-
 def incremental_elt(session, 
                     state_dict:dict, 
                     files_to_ingest:list, 
@@ -6,35 +5,48 @@ def incremental_elt(session,
                     download_base_url='') -> str:
     
     import dags.elt as ELT
-    
+    from datetime import datetime
+
     load_stage_name=state_dict['load_stage_name']
     load_table_name=state_dict['load_table_name']
     trips_table_name=state_dict['trips_table_name']
     
     if download_role_ARN and download_base_url:
         print("Skipping extract.  Using provided bucket.")
-        sql_cmd = 'CREATE OR REPLACE TEMPORARY STAGE '+str(load_stage_name)+\
+        sql_cmd = 'CREATE OR REPLACE TEMPORARY STAGE TEMP_LOAD_STAGE'\
                   ' url='+str(download_base_url)+\
                   " credentials=(aws_role='" + str(download_role_ARN)+"')"
         session.sql(sql_cmd).collect()
         
-        files_to_load = [file.replace('.zip','.gz') for file in files_to_ingest]
-    
+        schema1_download_files = list()
+        schema2_download_files = list()
+        schema2_start_date = datetime.strptime('202102', "%Y%m")
+
+        for file_name in files_to_ingest:
+            file_start_date = datetime.strptime(file_name.split("-")[0], "%Y%m")
+            if file_start_date < schema2_start_date:
+                schema1_download_files.append(file_name.replace('.zip','.gz'))
+            else:
+                schema2_download_files.append(file_name.replace('.zip','.gz'))
+        
+        
+        load_stage_names = {'schema1':'TEMP_LOAD_STAGE', 'schema2':'TEMP_LOAD_STAGE'}
+        files_to_load = {'schema1': schema1_download_files, 'schema2': schema2_download_files}
+        #print(files_to_load)
     else:
         print("Extracting files from public location.")
         download_base_url=state_dict['download_base_url']
-        _ = session.sql('CREATE OR REPLACE TEMPORARY STAGE '+str(load_stage_name)).collect()        
-        load_stage_name, files_to_load = ELT.extract_trips_to_stage(session=session, 
+        #_ = session.sql('CREATE OR REPLACE TEMPORARY STAGE '+str(load_stage_name)).collect()        
+        load_stage_names, files_to_load = ELT.extract_trips_to_stage(session=session, 
                                                                     files_to_download=files_to_ingest, 
                                                                     download_base_url=download_base_url, 
                                                                     load_stage_name=load_stage_name)
-        
 
     print("Loading files to raw.")
     stage_table_names = ELT.load_trips_to_raw(session=session, 
                                               files_to_load=files_to_load, 
-                                              load_stage_name=load_stage_name, 
-                                              load_table_name=load_table_name)
+                                              load_stage_names=load_stage_names, 
+                                              load_table_name=load_table_name)    
     
     print("Transforming records to trips table.")
     trips_table_name = ELT.transform_trips(session=session, 
