@@ -57,12 +57,15 @@ def generate_features(session, input_df, holiday_table_name, precip_table_name):
     #Impute missing values for lag columns using mean of the previous period.
     mean_1 = round(feature_df.sort('DATE').limit(1).select(F.mean('COUNT')).collect()[0][0])
     mean_7 = round(feature_df.sort('DATE').limit(7).select(F.mean('COUNT')).collect()[0][0])
+    mean_365 = round(feature_df.sort('DATE').limit(365).select(F.mean('COUNT')).collect()[0][0])
 
     date_win = snp.Window.orderBy('DATE')
 
     feature_df = feature_df.with_column('LAG_1', F.lag('COUNT', offset=1, default_value=mean_1) \
                                          .over(date_win)) \
                            .with_column('LAG_7', F.lag('COUNT', offset=7, default_value=mean_7) \
+                                         .over(date_win)) \
+                           .with_column('LAG_365', F.lag('COUNT', offset=365, default_value=mean_365) \
                                          .over(date_win)) \
                            .join(holiday_df, 'DATE', join_type='left').na.fill({'HOLIDAY':0}) \
                            .join(precip_df, 'DATE', 'inner') \
