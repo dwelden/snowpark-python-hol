@@ -11,17 +11,10 @@
 -Create a Runtime if there isn't one already  
 -Click on Start Runtime  
 -Click on Open Project  
--Create a directory called "snowpark"  
 -Select Git -> Clone Git Repository and enter the following:  
     -- Repository URL: https://github.com/sfc-gh-mgregory/snowpark-python-hol.  
-    -- Project Directory: snowpark  
--Upload the Snowflake Library provided to you in the session and put it into the "include" directory.  
-
--Select File -> New -> Terminal and run the following  
-```bash
-conda env create -f snowpark/snowpark-python-HOL/environment.yml
-```
--When opening notebooks be sure to select the "snowpark_040" kernel.
+-Select Yes when prompted to create a conda environment.
+-When opening notebooks be sure to select the "snowpark_041" kernel.
 
 ### Alternative Client  
 
@@ -45,7 +38,7 @@ cd ~/Desktop/snowpark-python
 git clone https://github.com/sfc-gh-mgregory/snowpark-python-hol
 cd snowpark-python-hol
 conda env create -f environment.yml
-conda activate snowpark_040
+conda activate snowpark_041
 jupyter notebook
 ```
 
