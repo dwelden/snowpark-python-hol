@@ -1,7 +1,7 @@
 ## Citibike Machine Learning Hands-on-Lab with Snowpark Python  
 
 ### Requirements:  
--An account in [Amazon SageMaker Studio Lab](https://studiolab.sagemaker.aws/).  
+-An account in [Amazon SageMaker Studio Lab](https://studiolab.sagemaker.aws/).  Do this ahead of time as sign-up may take up to 24 hours due to backlog.
 -A Snowflake account activated for Snowpark Private Preview.  
     
 
@@ -22,4 +22,6 @@
 conda env create -f snowpark/snowpark-python-HOL/environment.yml
 ```
 
-### Resources
+### Alternative Client  
+As an alternative to SageMaker Studio Lab this hands-on-lab can be run in Jupyter from local systems.  
+-
