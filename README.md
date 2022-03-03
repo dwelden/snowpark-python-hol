@@ -21,7 +21,35 @@
 ```bash
 conda env create -f snowpark/snowpark-python-HOL/environment.yml
 ```
+-When opening notebooks be sure to select the "snowpark_040" kernel.
 
 ### Alternative Client  
-As an alternative to SageMaker Studio Lab this hands-on-lab can be run in Jupyter from local systems.  
+
+As an alternative to SageMaker Studio Lab this hands-on-lab can be run in Jupyter from local systems.  The following example is for MacOS.
+```bash
+curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o ~/Downloads/miniconda.sh  
+sh ~/Downloads/miniconda.sh -b -p $HOME/miniconda  
+~/miniconda/bin/conda init  
+conda update conda
+cat .bash_profile >> .zshrc  
+```
+-If git is not installed on your local system you can install via conda.
+```bash
+conda install git
+```
+
+-Clone this repository and create an environment
+```
+mkdir ~/Desktop/snowpark-python
+cd ~/Desktop/snowpark-python
+git clone https://github.com/sfc-gh-mgregory/snowpark-python-hol
+cd snowpark-python-hol
+conda env create -f environment.yml
+conda activate snowpark_040
+jupyter notebook
+```
+
+## TODO
+
+-Update with public conda install of snowpark client  
 -
