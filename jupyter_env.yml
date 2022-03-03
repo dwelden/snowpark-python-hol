@@ -6,6 +6,7 @@ dependencies:
   - pip
   - pip:
     - './include/snowflake_snowpark_python-0.4.1-py3-none-any.whl[pandas]'
+    - jupyter
     - pytorch-tabnet
     - matplotlib
     - seaborn
